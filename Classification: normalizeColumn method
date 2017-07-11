@@ -1,0 +1,10 @@
+def normalizeColumn (self, columnNumber):
+    """given a column number, normalize that column in self.data"""
+    #first extract values to list 
+    col = [v[1][columnNumber] for v in self.data]
+    median = self.getMedian (col)
+    asd = self.getAbsoluteStandartDeviation (col, median)
+    #print ('Median: $f ASD = $f" % (median, asd))
+    self.medianAndDeviation.append ((median, asd))
+    for v in self.data:   
+        v [1][columnNumber] = (v[1][columnNumber] - median) / asd
