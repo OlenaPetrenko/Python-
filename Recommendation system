@@ -34,7 +34,7 @@ def computeNearestNeighbor (username, users):
    for user in users:
        if user != username:
           distance = manhattan (users [user], users [username])
-          distance.append ((distance, user))
+          distances.append ((distance, user))
    """sort based on distance -- closest first
    distances.sort ()
    return distances
