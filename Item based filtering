@@ -1,0 +1,73 @@
+# Adjusted cosine similarity
+def computeSimilarity (band1, band2, userRatings):
+   averages = {}
+   for (key, ratings) in userRatings.items ():
+       averages [key] = (float(sum(ratings.values ()))/len(ratings.values()))
+   num = 0 # numerator
+   dem1 = 0 # first half of denominator
+   dem2 = 0
+   for (user, ratings) in userRatings.items ():
+      if band1 in ratings and band2 in ratings:
+         avg = averages [user]
+         num += (ratings[band1] - avg) * (ratings[band2] - avg)
+         dem1 += (ratings [band1] - avg)**2
+         dem2 += (ratings [band2] - avg)**2
+   return num/(sqrt(dem1) * sqrt(dem2))
+  
+# Slope one algorithm
+import codecs 
+from math import sqrt
+
+users2 = {"Amy": {"Taylor Swift": 4, "PSY": 3, "Whitney Houston": 4},
+          "Ben": {"Taylor Swift": 5, "PSY": 2},
+          "Clara": {"PSY": 3.5, "Whitney Houston": 4},
+          "Daisy": {"Taylor Swift": 5, "Whitney Houston": 3}}
+         
+# Compute the deviation
+def computeDeviations (self):
+   # for each person in the data:
+   # get their ratings
+   for ratings in self.data.values():
+       # for each item & rating in that set of ratings:
+       for (item, rating) in ratings.items ():
+           self.frequencies.setdefault (item, {})
+           self.deviations.setdefault (item, {})
+           # for each item2 & rating2 in that set of ratings:
+           for (item2, rating2) in rating.items ():
+               if item != item2:
+                  # add the difference between the ratings
+                  # to our computation
+                  self.frequencies [item].setdefault (item2,0)
+                  self.deviations [item].setdefault (item2,0.0)
+                  self.frequencies [item][item2] += 1
+                  self.deviations [item][item2] += rating - rating2
+    for (item, ratings) in self.deviations.items ():
+        for item2 in ratings:
+            ratings [item2] /= self.frequencies [item][item2]
+      
+# Weighted Slope One
+def slopeOneRecommendations (self, userRatings):
+    recommendations = {}
+    frequencies = {}
+    # for every item and rating in the user's recommendations
+    for (userItem, userRating) in userRatings.items ():
+        # for every item in our dataset that the user didn't rate
+        for (diffItem, diffRatings) in self.deviations.items ():
+            if diffItem not in userRatings and\
+               userItem in self.deviations [diffItem]:
+               freq = self.frequencies [diffItem][userItem]
+               recommendations.setdefault (diffItem, 0.0)
+               frequencies.setdefault (diffItem, 0)
+               # add to the running sum representing the numerator of the formula
+               recommendations [diffItem] += (diffRatings[userItem] + 
+                                             userRating) * freq
+               # keep a running sum of the frequency of diffitem 
+               frequencies[diffItem] += freq
+     recommendations = [(self.convertProductID2name (k),
+                        v / frequencies [k])
+                        for (k,v) in recommendations.items ()]
+     # finally sort and return 
+     recommendations.sort (key = lambda artistTuple: artistTuple [1],
+                           reverse = True)
+     return recommendations
+ 
